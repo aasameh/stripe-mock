@@ -314,6 +314,5 @@ class StripeClient:
         return self.post(Endpoints.CHARGES, data=data)
     
     def retrieve_charge(self, charge_id: str) -> requests.Response:
-        """Retrieve a Charge by ID."""
         endpoint = Endpoints.CHARGE.format(id=charge_id)
         return self.get(endpoint)

@@ -1,22 +1,22 @@
 class Endpoints:
 
-    PAYMENT_INTENTS = "/v1/payments_intents"
-    PAYMENT_INTENT = "/v1/payments_indents/:id"
-    CONFIRM_PAYMENT_INTENT = "/v1/payments_indents/:id/confirm"
-    CAPTURE_PAYMENT_INTENT = "/v1/payments_indents/:id/capture"
-    CANCEL_PAYMENT_INTENT = "/v1/payments_indents/:id/cancel"
+    PAYMENT_INTENTS = "/v1/payment_intents"
+    PAYMENT_INTENT = "/v1/payment_intents/{id}"
+    CONFIRM_PAYMENT_INTENT = "/v1/payment_intents/{id}/confirm"
+    CAPTURE_PAYMENT_INTENT = "/v1/payment_intents/{id}/capture"
+    CANCEL_PAYMENT_INTENT = "/v1/payment_intents/{id}/cancel"
 
     CUSTOMERS= "/v1/customers"
-    CUSTOMER = "/v1/customers/:id"
-    SEARCH_CUSTOMERS = "v1/customers/search"
+    CUSTOMER = "/v1/customers/{id}"
+    SEARCH_CUSTOMERS = "/v1/customers/search"
 
     REFUNDS = "/v1/refunds"
-    REFUND = "/v1/refunds/:id"
-    CANCEL_REFUND = "/v1/refunds/:id/cancel"
+    REFUND = "/v1/refunds/{id}"
+    CANCEL_REFUND = "/v1/refunds/{id}/cancel"
 
     CHARGES = "/v1/charges"
-    CHARGE = "/v1/charges/:id"
-    CAPTURE_CHARGE = "/v1/charges/:id/capture"
+    CHARGE = "/v1/charges/{id}"
+    CAPTURE_CHARGE = "/v1/charges/{id}/capture"
     SEARCH_CHARGES = "/v1/charges/search"
 
 # Valid Status Codes
