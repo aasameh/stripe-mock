@@ -3,7 +3,6 @@ from typing import Optional, Dict, Any
 from config.settings import settings
 from config.constants import Endpoints
 
-
 class StripeClient:
     def __init__(self, base_url: Optional[str] = None, api_key: Optional[str] = None):
         self.base_url = base_url or settings.get_base_url()
