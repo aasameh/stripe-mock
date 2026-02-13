@@ -1,0 +1,20 @@
+# HTTP Client
+requests>=2.31.0
+
+# Testing Framework
+pytest>=7.4.0
+pytest-html>=4.1.0
+pytest-xdist>=3.5.0
+
+# Schema Validation
+jsonschema>=4.20.0
+
+# Environment & Config
+python-dotenv>=1.0.0
+
+# Reporting
+allure-pytest>=2.13.0
+
+# Code Quality
+flake8>=6.1.0
+black>=23.12.0
