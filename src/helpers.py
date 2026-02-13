@@ -1,9 +1,9 @@
 import json
 from typing import Any, Dict, List, Optional
 from jsonschema import validate, ValidationError #type:ignore
+from requests import Response
 
-
-def assert_status_code(response, expected_code: int, message: Optional[str] = None):
+def assert_status_code(response: Response, expected_code: int, message: Optional[str] = None):
 
     actual_code = response.status_code
     error_msg = message or f"Expected status code {expected_code}, got {actual_code}"
@@ -16,26 +16,29 @@ def assert_status_code(response, expected_code: int, message: Optional[str] = No
     assert actual_code == expected_code, error_msg
 
 
-def assert_response_contains(response, key: str, expected_value: Any = None):
+def assert_response_contains(response:Response, key: str, expected_value: Any = None):
     data = response.json()
     assert key in data, f"Response missing key '{key}'. Response: {data}"
     if expected_value is not None:
         assert data[key] == expected_value, f"Expected {key}={expected_value}, got {data[key]}"
 
 
-def assert_object_type(response, expected_type: str):
+def assert_object_type(response:Response, expected_type: str):
     data = response.json()
     assert "object" in data, f"Response missing 'object' field. Response: {data}"
     assert data["object"] == expected_type, f"Expected object type '{expected_type}', got '{data['object']}'"
 
 
-def assert_id_prefix(response, expected_prefix: str):
-    data = response.json()
-    assert "id" in data, f"Response missing 'id' field. Response: {data}"
-    assert data["id"].startswith(expected_prefix), f"Expected ID prefix '{expected_prefix}', got ID '{data['id']}'"
+def assert_id_prefix(data, expected_prefix: str):
+    if isinstance(data, str):
+        id_value = data
+    else:
+        assert "id" in data, f"Response missing 'id' field. Response: {data}"
+        id_value = data["id"]
+    assert id_value.startswith(expected_prefix), f"Expected ID prefix '{expected_prefix}', got ID '{id_value}'"
 
 
-def assert_is_list_response(response, expected_object_type: Optional[str] = None):
+def assert_is_list_response(response:Response, expected_object_type: Optional[str] = None):
     data = response.json()
     assert "object" in data and data["object"] == "list", "Response is not a list object"
     assert "data" in data, "List response missing 'data' field"
@@ -46,7 +49,7 @@ def assert_is_list_response(response, expected_object_type: Optional[str] = None
             assert item.get("object") == expected_object_type, f"List item type mismatch: {item}"
 
 
-def assert_error_response(response, expected_type: Optional[str] = None):
+def assert_error_response(response:Response, expected_type: Optional[str] = None):
     data = response.json()
     assert "error" in data, f"Response is not an error response. Response: {data}"
     
@@ -55,7 +58,7 @@ def assert_error_response(response, expected_type: Optional[str] = None):
         assert error.get("type") == expected_type, f"Expected error type '{expected_type}', got '{error.get('type')}'"
 
 
-def validate_json_schema(response, schema: Dict[str, Any]):
+def validate_json_schema(response:Response, schema: Dict[str, Any]):
     try:
         data = response.json()
         validate(instance=data, schema=schema)
@@ -63,7 +66,7 @@ def validate_json_schema(response, schema: Dict[str, Any]):
         raise AssertionError(f"Schema validation failed: {e.message}")
 
 
-def assert_field_types(response, field_types: Dict[str, type]):
+def assert_field_types(response:Response, field_types: Dict[str, type]):
     """
     Assert that response fields have the expected types.
     
@@ -80,20 +83,20 @@ def assert_field_types(response, field_types: Dict[str, type]):
                 f"Field '{field}' expected {expected_type.__name__}, got {type(actual_value).__name__}"
 
 
-def assert_required_fields(response, required_fields: List[str]):
+def assert_required_fields(response:Response, required_fields: List[str]):
     data = response.json()
     missing_fields = [field for field in required_fields if field not in data]
     assert not missing_fields, f"Response missing required fields: {missing_fields}"
 
 
-def get_response_json(response) -> Dict[str, Any]:
+def get_response_json(response:Response) -> Dict[str, Any]:
     try:
         return response.json()
     except json.JSONDecodeError:
         raise AssertionError(f"Response is not valid JSON: {response.text}")
 
 
-def extract_id(response) -> str:
+def extract_id(response:Response) -> str:
     data = response.json()
     assert "id" in data, f"Response missing 'id' field. Response: {data}"
     return data["id"]

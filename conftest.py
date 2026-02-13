@@ -43,6 +43,15 @@ def sample_refund_data():
     }
 
 
+@pytest.fixture
+def sample_charge_data():
+    return {
+        "amount": 2000,
+        "currency": "usd",
+        "description": "Test charge",
+    }
+
+
 @pytest.fixture(scope="function")
 def created_customer(api_client, sample_customer_data):
     response = api_client.create_customer(**sample_customer_data)
@@ -56,6 +65,17 @@ def created_payment_intent(api_client, sample_payment_intent_data):
 
 
 @pytest.fixture(scope="function")
-def created_charge(api_client):
-    response = api_client.create_charge(amount=2000, currency="usd")
+def created_charge(api_client, sample_charge_data):
+    response = api_client.create_charge(**sample_charge_data)
     return response
+
+
+@pytest.fixture(scope="function")
+def created_refund(api_client, sample_refund_data):
+    # First create a charge to refund
+    charge_response = api_client.create_charge(amount=2000, currency="usd")
+    charge_id = charge_response.json()["id"]
+    
+    # Then create refund
+    refund_response = api_client.create_refund(charge=charge_id, **sample_refund_data)
+    return refund_response

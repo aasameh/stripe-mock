@@ -19,19 +19,6 @@ class Endpoints:
     CAPTURE_CHARGE = "/v1/charges/{id}/capture"
     SEARCH_CHARGES = "/v1/charges/search"
 
-# Valid Status Codes
-class StatusCodes:
-    """Expected HTTP status codes."""
-    OK = 200
-    CREATED = 201
-    BAD_REQUEST = 400
-    UNAUTHORIZED = 401
-    NOT_FOUND = 404
-    REQUEST_FAILED = 402
-    RATE_LIMITED = 429
-    SERVER_ERROR = 500
-
-
 # Payment Intent Statuses
 class PaymentIntentStatus:
     REQUIRES_PAYMENT_METHOD = "requires_payment_method"
@@ -101,6 +88,23 @@ class ErrorType:
     CARD_ERROR = "card_error"
     RATE_LIMIT = "rate_limit_error"
     API_ERROR = "api_error"
+
+
+# HTTP Status Codes
+class StatusCodes:
+    OK = 200
+    BAD_REQUEST = 400
+    UNAUTHORIZED = 401
+    REQUEST_FAILED = 402
+    FORBIDDEN = 403
+    NOT_FOUND = 404
+    CONFLICT = 409
+    EXTERNAL_DEPENDENCY_FAILED = 424
+    TOO_MANY_REQUESTS = 429
+    INTERNAL_SERVER_ERROR = 500
+    BAD_GATEWAY = 502
+    SERVICE_UNAVAILABLE = 503
+    GATEWAY_TIMEOUT = 504
 
 
 # Test Data

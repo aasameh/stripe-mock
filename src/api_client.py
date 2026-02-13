@@ -56,8 +56,8 @@ class StripeClient:
     # Payment intents    
     def create_payment_intent(
         self,
-        amount: int,
-        currency: str,
+        amount: Optional[int] = None,
+        currency: Optional[str] = None,
         description: Optional[str] = None,
         customer: Optional[str] = None,
         payment_method: Optional[str] = None,
@@ -65,10 +65,11 @@ class StripeClient:
         **kwargs
     ) -> requests.Response:
 
-        data = {
-            "amount": amount,
-            "currency": currency,
-        }
+        data = {}
+        if amount is not None:
+            data["amount"] = amount
+        if currency:
+            data["currency"] = currency
         if description:
             data["description"] = description
         if customer:
@@ -192,7 +193,14 @@ class StripeClient:
     def update_customer(self, customer_id: str, **kwargs) -> requests.Response:
 
         endpoint = Endpoints.CUSTOMER.format(id=customer_id)
-        return self.post(endpoint, data=kwargs)
+        data = {}
+        for key, value in kwargs.items():
+            if key == 'metadata' and isinstance(value, dict):
+                for k, v in value.items():
+                    data[f"metadata[{k}]"] = v
+            else:
+                data[key] = value
+        return self.post(endpoint, data=data)
     
     def delete_customer(self, customer_id: str) -> requests.Response:
 
@@ -262,7 +270,14 @@ class StripeClient:
     
     def update_refund(self, refund_id: str, **kwargs) -> requests.Response:
         endpoint = Endpoints.REFUND.format(id=refund_id)
-        return self.post(endpoint, data=kwargs)
+        data = {}
+        for key, value in kwargs.items():
+            if key == 'metadata' and isinstance(value, dict):
+                for k, v in value.items():
+                    data[f"metadata[{k}]"] = v
+            else:
+                data[key] = value
+        return self.post(endpoint, data=data)
     
     def list_refunds(
         self,
@@ -315,3 +330,32 @@ class StripeClient:
     def retrieve_charge(self, charge_id: str) -> requests.Response:
         endpoint = Endpoints.CHARGE.format(id=charge_id)
         return self.get(endpoint)
+    
+    def update_charge(self, charge_id: str, **kwargs) -> requests.Response:
+        endpoint = Endpoints.CHARGE.format(id=charge_id)
+        data = {}
+        for key, value in kwargs.items():
+            if key == 'metadata' and isinstance(value, dict):
+                for k, v in value.items():
+                    data[f"metadata[{k}]"] = v
+            else:
+                data[key] = value
+        return self.post(endpoint, data=data)
+    
+    def capture_charge(self, charge_id: str, **kwargs) -> requests.Response:
+        endpoint = Endpoints.CAPTURE_CHARGE.format(id=charge_id)
+        return self.post(endpoint, data=kwargs)
+    
+    def list_charges(
+        self,
+        limit: Optional[int] = None,
+        customer: Optional[str] = None,
+        **kwargs
+    ) -> requests.Response:
+        params = {}
+        if limit:
+            params["limit"] = limit
+        if customer:
+            params["customer"] = customer
+        params.update(kwargs)
+        return self.get(Endpoints.CHARGES, params=params)
