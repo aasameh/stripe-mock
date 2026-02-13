@@ -1,0 +1,869 @@
+{
+  "info": {
+    "_postman_id": "afbb32c7-a110-4f20-ac71-443fbb8d7ad6",
+    "name": "stripe-mock API testing",
+    "description": "This collection tests Stripe payment endpoints using stripe-mock server\n\nTest Coverage:\n\n- Payment Intents: Create, retrieve, confirm, cancel\n    \n- Customers: CRUD\n    \n- Refunds: Create, retrieve, cancel\n    \n- Auth and errors: 401 and 404 validation",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52297058"
+  },
+  "item": [
+    {
+      "name": "Payment Intents",
+      "item": [
+        {
+          "name": "Create Payment Intent Confirm",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {pm.response.to.have.status(200);});\r",
+                  "pm.test(\"ID starts with pi_\", () => {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.id).to.include(\"pi_\");\r",
+                  "});\r",
+                  "pm.environment.set(\"payment_intent_id_confirm\", pm.response.json().id);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "amount",
+                  "value": "2000",
+                  "type": "text",
+                  "id": 0
+                },
+                {
+                  "key": "currency",
+                  "value": "usd",
+                  "type": "text",
+                  "id": 1
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/payment_intents",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "payment_intents"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Payment Intent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "payment_method",
+                  "value": "pm_card_visa",
+                  "type": "text",
+                  "id": 0
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/payment_intents/{{payment_intent_id_confirm}}/confirm",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "payment_intents",
+                "{{payment_intent_id_confirm}}",
+                "confirm"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Payment Intent Retrieve",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {pm.response.to.have.status(200);});\r",
+                  "pm.test(\"ID starts with pi_\", () => {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.id).to.include(\"pi_\");\r",
+                  "});\r",
+                  "pm.environment.set(\"payment_intent_id_retrieve\", pm.response.json().id);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "amount",
+                  "value": "2000",
+                  "type": "text",
+                  "id": 0
+                },
+                {
+                  "key": "currency",
+                  "value": "usd",
+                  "type": "text",
+                  "id": 1
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/payment_intents",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "payment_intents"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve Payment Intent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Returns correct ID\", () => {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.id).to.eql(pm.environment.get(\"payment_intent_id_retrieve\"));\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/payment_intents/{{payment_intent_id_retrieve}}",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "payment_intents",
+                "{{payment_intent_id_retrieve}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Payment Intent Cancel",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {pm.response.to.have.status(200);});\r",
+                  "pm.test(\"ID starts with pi_\", () => {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.id).to.include(\"pi_\");\r",
+                  "});\r",
+                  "pm.environment.set(\"payment_intent_id_cancel\", pm.response.json().id);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "amount",
+                  "value": "2000",
+                  "type": "text",
+                  "id": 0
+                },
+                {
+                  "key": "currency",
+                  "value": "usd",
+                  "type": "text",
+                  "id": 1
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/payment_intents",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "payment_intents"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Payment Intent",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "cancellation_reason",
+                  "value": "fraudulent",
+                  "type": "text",
+                  "id": 0
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/payment_intents/{{payment_intent_id_cancel}}/cancel",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "payment_intents",
+                "{{payment_intent_id_cancel}}",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Payment Intent (missing amount)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 400\", ()=>{\r",
+                  "    pm.response.to.have.status(400);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "currency",
+                  "value": "usd",
+                  "type": "text",
+                  "id": 0
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/payment_intents",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "payment_intents"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Refunds",
+      "item": [
+        {
+          "name": "Create Refund",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"ID starts with re_\", () => {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.id).to.include(\"re_\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.environment.set(\"refund_id\", pm.response.json().id);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "payment_intent",
+                  "value": "{{payment_intent_id}}",
+                  "type": "text",
+                  "id": 0
+                },
+                {
+                  "key": "reason",
+                  "value": "duplicate",
+                  "type": "text",
+                  "id": 1
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/refunds",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "refunds"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve Refund",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/refunds/{{refund_id}}",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "refunds",
+                "{{refund_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "No API Key 401",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/payment_intents",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "payment_intents"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid API Key 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 401\", () => {\r",
+                  "    pm.response.to.have.status(401);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "sk_test_invalid_fake_key",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/payment_intents",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "payment_intents"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Endpoint 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 404\", () => {\r",
+                  "    pm.response.to.have.status(404);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/invalid_endpoint",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "invalid_endpoint"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "Create Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"ID starts with cus_\", () => {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.id).to.include(\"cus_\");\r",
+                  "});\r",
+                  "\r",
+                  "pm.environment.set(\"customer_id\", pm.response.json().id);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "test@example.com",
+                  "type": "text",
+                  "id": 0
+                },
+                {
+                  "key": "name",
+                  "value": "test customer",
+                  "type": "text",
+                  "id": 1
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/customers",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "customers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Retrieve Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/customers/{{customer_id}}",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "customers",
+                "{{customer_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Name was updated\", () => {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.name).to.eql(\"updated name\");\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "updated name",
+                  "type": "text",
+                  "id": 0
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/customers/{{customer_id}}",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "customers",
+                "{{customer_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "\r",
+                  "pm.test(\"Deleted flag is true\", () => {\r",
+                  "    const data = pm.response.json();\r",
+                  "    pm.expect(data.deleted).to.be.true;\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{STRIPE_API_KEY}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{STRIPE_MOCK_URL}}/v1/customers/{{customer_id}}",
+              "host": [
+                "{{STRIPE_MOCK_URL}}"
+              ],
+              "path": [
+                "v1",
+                "customers",
+                "{{customer_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
